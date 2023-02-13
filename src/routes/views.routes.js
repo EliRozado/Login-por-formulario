@@ -3,24 +3,21 @@ import cartsDao from "../daos/dbManager/carts.dao.js";
 import productsDao from "../daos/dbManager/products.dao.js";
 import __dirname from '../utils.js';
 
+import isSession from '../middlewares/isSession.js';
+
 const router = Router();
 
-const isSession = (req, res, next) => {
-    if (req.session.user) {
-        return res.redirect('/products')
-    }
-    next();
-}
-
 router.get('/products', async (req, res) => {
-    if (!req.session.user) {
+    const user =  req.session.user;
+
+    if (!user) {
         return res.redirect('/login')
     }
 
     const {page, limit, sort, category, status} = req.query;
     const products = await productsDao.getAll({page, limit, sort, category, status})
     
-    res.render('products', { products })
+    res.render('products', { products, user})
 })
 
 router.get('/products/:id', async (req, res) => {

@@ -6,6 +6,7 @@ import __dirname from './utils.js';
 
 import productsRoutes from "./routes/products.routes.js";
 import cartsRoutes from "./routes/carts.routes.js";
+import sessionRoutes from "./routes/session.routes.js";
 import viewsRouter from './routes/views.routes.js';
 
 import MongoStore from "connect-mongo";
@@ -42,7 +43,7 @@ app.use(session({
             useNewUrlParser: true,
             useUnifiedTopology: true
         },
-        ttl: 600
+        ttl: 60
     }),
     secret: 'eApp',
     resave: false,
@@ -53,6 +54,7 @@ app.use(express.static(`${__dirname}/public`))
 // Routes
 app.use('/api/products', productsRoutes);
 app.use('/api/cart', cartsRoutes);
+app.use('/session', sessionRoutes);
 app.use('/', viewsRouter);
 app.get('*', (req, res) => { res.status(404).send('404 not found')})
 
