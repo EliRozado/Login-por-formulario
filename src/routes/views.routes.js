@@ -5,7 +5,18 @@ import __dirname from '../utils.js';
 
 const router = Router();
 
+const isSession = (req, res, next) => {
+    if (req.session.user) {
+        return res.redirect('/products')
+    }
+    next();
+}
+
 router.get('/products', async (req, res) => {
+    if (!req.session.user) {
+        return res.redirect('/login')
+    }
+
     const {page, limit, sort, category, status} = req.query;
     const products = await productsDao.getAll({page, limit, sort, category, status})
     
@@ -24,8 +35,16 @@ router.get('/carts/:cid', async (req,res) => {
     console.log(cart)
 
     res.render('cart', { cart })
-    
 })
+
+router.get('/login', isSession, async (req, res) => {    
+    res.render('login')
+})
+
+router.get('/register', isSession, async (req, res) => {    
+    res.render('register')
+})
+
 
 
 export default router;
